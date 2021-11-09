@@ -1,0 +1,32 @@
+# Cluster config to create the kubernetes cluster
+# eksctl create cluster -f eks_cluster_config.yaml
+---
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: dev-cluster
+  region: ap-south-1
+
+iam:
+  withOIDC: true
+  serviceAccounts:
+  - metadata:
+      name: cluster-autoscaler
+      namespace: kube-system
+      labels: {aws-usage: "cluster-ops"}
+    wellKnownPolicies:
+      autoScaler: true
+    roleName: eksctl-cluster-autoscaler-role
+    roleOnly: true
+managedNodeGroups:
+  - name: managed-ng-1
+    # EC2 tags required for cluster-autoscaler auto-discovery
+    tags:
+      k8s.io/cluster-autoscaler/enabled: "true"
+      k8s.io/cluster-autoscaler/dev-cluster: "owned"
+    instanceType: t3.large
+    minSize: 1
+    maxSize: 2
+    desiredCapacity: 1
+    volumeSize: 80
