@@ -22,7 +22,8 @@ module "vpc" {
   public_subnets   = var.public_subnet
   private_subnets  = var.private_subnet
   database_subnets = var.database_subnet
-
+  enable_nat_gateway = true
+  single_nat_gateway = true
   create_database_subnet_group = true
 
   tags = local.tags
@@ -49,7 +50,7 @@ resource "aws_security_group_rule" "allow_all" {
   to_port           = 0
   from_port         = 0
   protocol          = "-1"
-  cidr_blocks       = [module.vpc.vpc_cidr_block]
+  cidr_blocks       = ["0.0.0.0/0"]
   ipv6_cidr_blocks  = []
   security_group_id = aws_security_group.default_instances.id
 }
