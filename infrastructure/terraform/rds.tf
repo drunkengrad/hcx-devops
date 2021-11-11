@@ -40,7 +40,7 @@ resource "aws_security_group" "allow_postgres" {
 
 resource "aws_db_instance" "rds" {
   engine                = "postgres"
-  engine_version        = "11.10"
+  engine_version        = "11.12"
   instance_class        = "db.t3.large"
   allocated_storage     = 20
   max_allocated_storage = 100
