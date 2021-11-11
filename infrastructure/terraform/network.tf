@@ -45,6 +45,15 @@ resource "aws_security_group_rule" "ssh" {
   ipv6_cidr_blocks  = []
   security_group_id = aws_security_group.default_instances.id
 }
+resource "aws_security_group_rule" "ingress_allow_vpc_all" {
+  type              = "ingress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  cidr_blocks       = [module.vpc.vpc_cidr_block]
+  ipv6_cidr_blocks  = []
+  security_group_id = aws_security_group.default_instances.id
+}
 resource "aws_security_group_rule" "allow_all" {
   type              = "egress"
   to_port           = 0
