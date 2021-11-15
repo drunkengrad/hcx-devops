@@ -1,0 +1,29 @@
+pipeline {
+    agent {
+        label "ansible"
+    }
+    options{
+        ansiColor('xterm')
+    }
+    stages {
+      stage('Run ansible') {
+        steps {
+            container('ansible') {
+              checkout scm
+              checkout([$class: 'GitSCM', branches: [[name: '*/main']],
+                  extensions: [[$class: 'CloneOption', depth: 1, noTags: true,
+                  reference: 'private', shallow: true]],
+                  userRemoteConfigs: [
+                      [credentialsId: "GH_REPO_CRED",
+                      url: "${env.GH_PRIVATE_REPO}"]
+                  ]])
+              sh '''
+              cd ansible
+              ansible-playbook -i ../private/hcx/ansible/inventory/dev/hosts kafka.yaml 
+              '''
+        }
+      }
+    }
+  }
+}
+
