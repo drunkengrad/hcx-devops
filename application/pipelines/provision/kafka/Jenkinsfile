@@ -10,13 +10,16 @@ pipeline {
         steps {
             container('ansible') {
               checkout scm
-              checkout([$class: 'GitSCM', branches: [[name: '*/main']],
-                  extensions: [[$class: 'CloneOption', depth: 1, noTags: true,
-                  reference: 'private', shallow: true]],
-                  userRemoteConfigs: [
-                      [credentialsId: "GH_REPO_CRED",
-                      url: "${env.GH_PRIVATE_REPO}"]
-                  ]])
+              checkout(
+                [$class: 'GitSCM', branches: [[name: '*/main']],
+                extensions: [
+                    [$class: 'RelativeTargetDirectory', relativeTargetDir: 'private'],
+                    [$class: 'CloneOption', noTags: true, reference: '', shallow: true]
+                ],
+                userRemoteConfigs: [[
+                      credentialsId: "${env.GH_REPO_CRED}",
+                      url: "${env.GH_PRIVATE_REPO}"
+              ]]])
               sh '''
               cd ansible
               ansible-playbook -i ../private/hcx/ansible/inventory/dev/hosts kafka.yaml 
