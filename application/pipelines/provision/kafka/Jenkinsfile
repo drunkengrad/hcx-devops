@@ -21,8 +21,8 @@ pipeline {
                       url: "${env.GH_PRIVATE_REPO}"
               ]]])
               sh '''
-              cd ansible
-              ansible-playbook -i ../private/hcx/ansible/inventory/dev/hosts kafka.yaml 
+              cd application/ansible
+              ansible-playbook -i ../../private/hcx/ansible/inventory/dev/hosts kafka.yaml kafka.yaml
               '''
         }
       }
