@@ -15,4 +15,4 @@
       shell: update-alternatives --install /usr/bin/java java /opt/jre1.8.0_144/bin/java 9999
   roles:
     - zookeeper
-    - ansible-kafka-upgrade
+    - kafka
