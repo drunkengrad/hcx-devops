@@ -32,8 +32,10 @@ spec:
           env:
             - name: bootstrap_servers
               value: "10.0.1.196:9092"
-            - name: kafka_topic
-              value: "dev.hcx.api.request"
+            - name: kafka_payload_topic
+              value: "dev.hcx.request.payload"
+            - name: kafka_ingest_topic
+              value: "dev.hcx.request.ingest"
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
