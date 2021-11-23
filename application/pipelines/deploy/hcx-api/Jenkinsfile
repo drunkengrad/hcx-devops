@@ -6,6 +6,7 @@ def commonVariables = {
     jobName = completeJobName.split('/')[-1].trim().toLowerCase()
     appName = params.application ?: jobName
     envName = completeJobName.split('/')[-2].trim().toLowerCase()
+    chartPath = "${env.WORKSPACE}/application/helm/core/$jobName"
 }
 
 def checkoutPrivate = {
@@ -29,7 +30,7 @@ def deployHelm = {
     sh """
       echo ${appName}
       cd application/ansible
-      ansible-playbook -i ../../private/hcx/ansible/inventory/${envName}/hosts helm.yaml -e application=$appName -e namespace=${envName} -v
+      ansible-playbook -i ../../private/hcx/ansible/inventory/${envName}/hosts helm.yaml -e application=$appName -e namespace=${envName} -e chart_path=${chartPath} -v
     """
 }
 
