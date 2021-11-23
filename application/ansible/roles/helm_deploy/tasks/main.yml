@@ -7,4 +7,4 @@
     dest: "/tmp/{{ application }}.yaml"
 
 - name: Deploying application
-  shell: helm upgrade --install --atomic {{ application }} {{chart_path}} namespace }}/{{ application }} -n {{namespace}} -f /tmp/{{ application }}.yaml --create-namespace
+  shell: helm upgrade --install --atomic {{ application }} {{chart_path}} -n {{namespace}} -f /tmp/{{ application }}.yaml --create-namespace
