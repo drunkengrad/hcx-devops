@@ -1,34 +1,51 @@
-// vim: ft=groovy:
-pipeline {
-    agent {
-        label "ansible"
-    }
-    options{
-        ansiColor('xterm')
-    }
-    stages {
-      stage('Deploy hcx api') {
-        steps {
-            container('ansible') {
-              checkout scm
-              checkout(
-                [$class: 'GitSCM', branches: [[name: '*/main']],
-                extensions: [
-                    [$class: 'RelativeTargetDirectory', relativeTargetDir: 'private'],
-                    [$class: 'CloneOption', noTags: true, reference: '', shallow: true]
-                ],
-                userRemoteConfigs: [[
-                      credentialsId: "${env.GH_REPO_CRED}",
-                      url: "${env.GH_PRIVATE_REPO}"
-              ]]])
-              sh '''
-              cd application/ansible
-              ansible-playbook -i ../../private/hcx/ansible/inventory/dev/hosts kafka.yaml kafka.yaml
-              '''
-        }
-      }
-    }
-  }
+// vim: ft=groovy et ts=2 sw=2:
+
+// Defining common variables and functions
+def commonVariables = {
+    completeJobName = sh(returnStdout: true, script: "echo $JOB_NAME")
+    jobName = completeJobName.split('/')[-1].trim().toLowerCase()
+    appName = params.application ?: jobName
+    envName = completeJobName.split('/')[-2].trim().toLowerCase()
 }
 
+def checkoutPrivate = {
+          checkout(
+            [$class: 'GitSCM', branches: [[name: '*/main']],
+            extensions: [
+                [$class: 'RelativeTargetDirectory', relativeTargetDir: 'private'],
+                [$class: 'CloneOption', noTags: true, reference: '', shallow: true]
+            ],
+            userRemoteConfigs: [[
+                  credentialsId: "${env.GH_REPO_CRED}",
+                  url: "${env.GH_PRIVATE_REPO}"
+          ]]])
+}
 
+// Groovy closure
+// Ref: https://groovy-lang.org/closures.html
+def deployHelm = {
+    // Variable declaration
+    appName ->
+    sh """
+      echo ${appName}
+      cd application/ansible
+      ansible-playbook -i ../../private/hcx/ansible/inventory/${envName}/hosts helm.yaml -e application=$appName -e namespace=${envName} -v
+    """
+}
+
+node('ansible') {
+    ansiColor('xterm') {
+      stage("Deploy") {
+          container('ansible'){
+            // Gathering all required variables
+            commonVariables()
+            // Checking out public repo
+            checkout scm
+            // Checking out private repo
+            checkoutPrivate()
+            // Deploy helm
+            deployHelm(appName)
+          }
+      }
+    }
+}

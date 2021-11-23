@@ -1,0 +1,10 @@
+---
+# tasks file for helm_deploy
+
+- name: Templating values file
+  template:
+    src: "{{application}}.yaml"
+    dest: "/tmp/{{ application }}.yaml"
+
+- name: Deploying application
+  shell: helm upgrade --install --atomic {{ application }} ../../../../helm/{{ namespace }}/{{ application }} -n {{namespace}} -f /tmp/{{ application }}.yaml --create-namespaces
