@@ -30,12 +30,10 @@ spec:
       containers:
         - name: {{ .Chart.Name }}
           env:
-            - name: bootstrap_servers
-              value: "10.0.1.196:9092"
-            - name: kafka_payload_topic
-              value: "dev.hcx.request.payload"
-            - name: kafka_ingest_topic
-              value: "dev.hcx.request.ingest"
+          {{- range $k, $v := .Values.env }}
+          - name: {{ $k }}
+            value: {{ $v }}
+          {{- end }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
