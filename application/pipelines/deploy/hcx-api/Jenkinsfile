@@ -7,17 +7,17 @@ node('ansible') {
           // Checking out public repo
           checkout scm
           // Loading library
-          common = load "${env.WORKSPACE}/application/pipelines/commonGroovy/common.groovy"
+          commonCode = load "${env.WORKSPACE}/application/pipelines/commonGroovy/common.groovy"
         }
       }
       stage("Deploy") {
           container('ansible'){
             // Gathering all required variables
-            common.commonVariables()
+            commonCode.commonVariables()
             // Checking out private repo
-            common.checkoutPrivate()
+            commonCode.checkoutPrivate()
             // Deploy helm
-            common.deployHelm(appName)
+            commonCode.deployHelm(appName)
           }
       }
     }
