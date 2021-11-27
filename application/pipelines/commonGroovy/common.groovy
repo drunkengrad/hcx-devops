@@ -25,12 +25,17 @@ checkoutPrivate = {
 deployHelm = {
     // Variable declaration
     appName ->
+
+    copyArtifacts filter: 'metadata.json', fingerprintArtifacts: true, projectName: "build/$appName"
+    imageName = sh(returnStdout: true, script: 'jq -r .image_name metadata.json').trim()
+    imageTag = params.image_tag ?: sh(returnStdout: true, script: 'jq -r .image_tag metadata.json').trim()
     sh """
       echo ${appName}
       cd application/ansible
-      ansible-playbook -i ../../private/hcx/ansible/inventory/${envName}/hosts helm.yaml -e application=$appName -e namespace=${envName} -e chart_path=${chartPath} -v
+      ansible-playbook -i ../../private/hcx/ansible/inventory/${envName}/hosts helm.yaml -e application=$appName -e image_tag=$imageTag -e namespace=${envName} -e chart_path=${chartPath} -v
     """
 }
+
 deployAnsible = {
     // Variable declaration
     ansibleCommands ->
