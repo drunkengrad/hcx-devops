@@ -17,7 +17,7 @@ node('ansible') {
             // Checking out private repo
             commonCode.checkoutPrivate()
             // Deploy helm
-            commonCode.deployHelm(appName)
+            commonCode.deployHelm(appName,"build/hcx-api")
           }
       }
     }

@@ -23,13 +23,18 @@ checkoutPrivate = {
 // Groovy closure
 // Ref: https://groovy-lang.org/closures.html
 deployHelm = {
-    // Variable declaration
-    appName ->
+    // Application to deploy, from which job the artifact information to be copied.
+    // If null default value will be "build/deployAppName"
+    appName, copyArtifactJob ->
 
+    if(copyArtifactJob == null) {
+        copyArtifactJob = "build/$appName"
+    }
+    
     // Overriding artifact version to deploy
     imageTag = params.artifact_version ?: ""
     if(imageTag == "") {
-        copyArtifacts filter: 'metadata.json', fingerprintArtifacts: true, projectName: "build/$appName"
+        copyArtifacts filter: 'metadata.json', fingerprintArtifacts: true, projectName: copyArtifactJob
         imageTag = sh(returnStdout: true, script: 'jq -r .image_tag metadata.json').trim()
     }
     sh """
