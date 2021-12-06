@@ -23,14 +23,22 @@ checkoutPrivate = {
 // Groovy closure
 // Ref: https://groovy-lang.org/closures.html
 deployHelm = {
-    // Variable declaration
-    appName ->
+    // Application to deploy, from which job the artifact information to be copied.
+    // If null default value will be "build/deployAppName"
+    appName, copyArtifactJob ->
 
-    copyArtifacts filter: 'metadata.json', fingerprintArtifacts: true, projectName: "build/$appName"
-    imageName = sh(returnStdout: true, script: 'jq -r .image_name metadata.json').trim()
-    imageTag = params.image_tag ?: sh(returnStdout: true, script: 'jq -r .image_tag metadata.json').trim()
+    if(copyArtifactJob == null) {
+        copyArtifactJob = "build/$appName"
+    }
+    
+    // Overriding artifact version to deploy
+    imageTag = params.artifact_version ?: ""
+    if(imageTag == "") {
+        copyArtifacts filter: 'metadata.json', fingerprintArtifacts: true, projectName: copyArtifactJob
+        imageTag = sh(returnStdout: true, script: 'jq -r .image_tag metadata.json').trim()
+    }
     sh """
-      echo ${appName}
+      echo ${appName}:${imageTag}
       cd application/ansible
       ansible-playbook -i ../../private/hcx/ansible/inventory/${envName}/hosts helm.yaml -e application=$appName -e image_tag=$imageTag -e namespace=${envName} -e chart_path=${chartPath} -v
     """
