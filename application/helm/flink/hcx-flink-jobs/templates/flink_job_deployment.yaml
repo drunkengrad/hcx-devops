@@ -112,20 +112,20 @@ spec:
         command: ["/opt/flink/bin/standalone-job.sh"]
         args:
         - start-foreground
-        - --job-classname={{ .Values.job_classname }}, 
+        - --job-classname={{ .Values.job_classname }}
         - -Dweb.submit.enable=false
         - -Dmetrics.reporter.prom.class=org.apache.flink.metrics.prometheus.PrometheusReporter
         - -Dmetrics.reporter.prom.port={{ .Values.jobmanager.prom_port }}
         - -Djobmanager.rpc.address={{ .Release.Name }}-jobmanager
         - -Djobmanager.rpc.port={{ .Values.jobmanager.rpc_port }}
-        - -Dparallelism.default=1, 
-        - -Dblob.server.port={{ .Values.jobmanager.blob_port }}, 
+        - -Dparallelism.default=1
+        - -Dblob.server.port={{ .Values.jobmanager.blob_port }}
         - -Dqueryable-state.server.ports={{ .Values.jobmanager.query_port }}
         {{- range $k, $v := .Values.jobManagerAdditionalArgs }}
         - {{ $v }}
         {{- end}}
         - --config.file.path
-        - /data/flink/conf/{{ .Release.Name }}.conf]
+        - /data/flink/conf/{{ .Release.Name }}.conf
         ports:
         - containerPort: {{ .Values.jobmanager.rpc_port }}
           name: rpc
@@ -182,18 +182,15 @@ spec:
       - name: {{ .Release.Name }}-taskmanager
         image: "{{ .Values.dockerhub }}/{{ .Values.repository }}:{{ .Values.image_tag }}"
         imagePullPolicy: Always
-        resources:
-          requests:
-            cpu: "{{ .Values.taskmanager.cpu_requests }}"
         workingDir: {{ .Values.taskmanager.flink_work_dir }}
         command: ["/opt/flink/bin/taskmanager.sh"]
         args:
-        - start-foreground,
-        - -Dweb.submit.enable=false,
-        - -Dmetrics.reporter.prom.class=org.apache.flink.metrics.prometheus.PrometheusReporter,
-        - -Dmetrics.reporter.prom.host={{ .Release.Name }}-taskmanager,
-        - -Dmetrics.reporter.prom.port=9251-9260,
-        - -Djobmanager.rpc.address={{ .Release.Name }}-jobmanager,
+        - start-foreground
+        - -Dweb.submit.enable=false
+        - -Dmetrics.reporter.prom.class=org.apache.flink.metrics.prometheus.PrometheusReporter
+        - -Dmetrics.reporter.prom.host={{ .Release.Name }}-taskmanager
+        - -Dmetrics.reporter.prom.port=9251-9260
+        - -Djobmanager.rpc.address={{ .Release.Name }}-jobmanager
         - -Dtaskmanager.rpc.port={{ .Values.taskmanager.rpc_port }}
         {{- range $k, $v := .Values.taskManagerAdditionalArgs }}
         - {{ $v }}
