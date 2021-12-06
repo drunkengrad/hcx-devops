@@ -4,7 +4,10 @@ image:
 env:
   bootstrap_servers: "{{ groups['kafka'][0] }}:9092"
   kafka_payload_topic: "{{ env }}.hcx.request.payload"
-  kafka_ingest_topic: "{{ env }}.hcx.request.ingest"
+  kafka_coverageeligibility_topic: "{{ env }}.hcx.request.coverageeligibility"
+  kafka_preauth_topic: "{{ env }}.hcx.request.preauth"
+  kafka_claim_topic: "{{ env }}.hcx.request.claim"
+  kafka_payment_topic: "{{ env }}.hcx.request.payment"
   service_mode: provider
 
 fullnameOverride: provider-api
