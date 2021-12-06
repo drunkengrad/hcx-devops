@@ -8,3 +8,7 @@ env:
   kafka_preauth_topic: "{{ env }}.hcx.request.preauth"
   kafka_claim_topic: "{{ env }}.hcx.request.claim"
   kafka_payment_topic: "{{ env }}.hcx.request.payment"
+  postgres_url: "jdbc:postgresql://terraform-20211111045938760100000001.culmyp72rbwi.ap-south-1.rds.amazonaws.com:5432/postgres"
+  postgres_user: "hcxpostgresql"
+  postgres_password: "SuperSecurePassword"
+  postgres_tablename: "payload"
