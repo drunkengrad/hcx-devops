@@ -1,0 +1,7 @@
+job_classname: "org.swasth.dp.claims.task.ClaimsStreamTask"
+taskManagerAdditionalArgs: []
+  # For example
+  # - -Dfs.azure.account.key.{{ .Values.azure_account }}.blob.core.windows.net={{ .Values.azure_secret }},
+jobManagerAdditionalArgs: []
+  # For example
+  # - -Dfs.azure.account.key.hcxapi.blob.core.windows.net=mysupersecretpassword

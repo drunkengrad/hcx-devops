@@ -2,7 +2,7 @@ namespace: flink
 imagePullSecrets: []
 dockerhub: "maheshkg"
 repository: "hcx-flink-jobs"
-image_tag: "latest"
+image_tag: "s2-3.0"
 serviceMonitor:
   enabled: false
 replicaCount: 1
@@ -110,11 +110,11 @@ base_config: |
       restart-strategy.delay = 30000
     }
     postgres {
-      host = localhost
+      host = terraform-20211111045938760100000001.culmyp72rbwi.ap-south-1.rds.amazonaws.com
       port = 5432
       maxConnections = 2
-      user = "postgres"
-      password = "password"
+      user = "hcxpostgresql"
+      password = "SuperSecurePassword"
     }
     redis {
       host = redis-master.dev.svc.cluster.local
@@ -134,24 +134,114 @@ base_config: |
       port = "9042"
     }
 
-eligibilitycheck:
-  eligibilitycheck: |+
+coverageeligibility:
+  coverageeligibility: |+
     include file("/data/flink/conf/base-config.conf")
     kafka.groupId:  ${job.env}"-coverage-eligibility-check-group"
-    kafka.input.topic: dev.hcx.request.eligibilitycheck
+    kafka.input.topic: dev.hcx.request.coverageeligibility
     kafka.audit.topic: dev.hcx.audit
     kafka.retry.topic: dev.hcx.request.retry
     task.consumer.parallelism :  1
     task.parallelism :  1
     task.downstream.operators.parallelism: 1
     #Postgres
-    postgres.database: hcx_db
+    postgres.database: postgres
     postgres.table: payload
     #Registry
     service.registry.basePath: "http://localhost:8081"
     kafka.producer.max-request-size: 1572864
     kafka.producer.batch.size: 98304
     kafka.producer.linger.ms: 10
+    #Redis
+    redisdb.assetstore.id = 1
+
+  flink-conf: |+
+    jobmanager.memory.flink.size: 1024m
+    taskmanager.memory.flink.size: 1024m
+    taskmanager.numberOfTaskSlots: 1
+    parallelism.default: 1
+    jobmanager.execution.failover-strategy: region
+    taskmanager.memory.network.fraction: 0.1
+
+
+preauthjob:
+  preauthjob: |+
+    include file("/data/flink/conf/base-config.conf")
+    kafka.groupId:  ${job.env}"-preauth-job-group"
+    kafka.input.topic: dev.hcx.request.preauth
+    kafka.audit.topic: dev.hcx.audit
+    kafka.retry.topic: dev.hcx.request.retry
+    task.consumer.parallelism :  1
+    task.parallelism :  1
+    task.downstream.operators.parallelism: 1
+    #Postgres
+    postgres.database: postgres
+    postgres.table: payload
+    #Registry
+    service.registry.basePath: "http://localhost:8081"
+    kafka.producer.max-request-size: 1572864
+    kafka.producer.batch.size: 98304
+    kafka.producer.linger.ms: 10
+    #Redis
+    redisdb.assetstore.id = 1
+
+  flink-conf: |+
+    jobmanager.memory.flink.size: 1024m
+    taskmanager.memory.flink.size: 1024m
+    taskmanager.numberOfTaskSlots: 1
+    parallelism.default: 1
+    jobmanager.execution.failover-strategy: region
+    taskmanager.memory.network.fraction: 0.1
+
+claimsjob:
+  claimsjob: |+
+    include file("/data/flink/conf/base-config.conf")
+    kafka.groupId:  ${job.env}"-claims-job-group"
+    kafka.input.topic: dev.hcx.request.claim
+    kafka.audit.topic: dev.hcx.audit
+    kafka.retry.topic: dev.hcx.request.retry
+    task.consumer.parallelism :  1
+    task.parallelism :  1
+    task.downstream.operators.parallelism: 1
+    #Postgres
+    postgres.database: postgres
+    postgres.table: payload
+    #Registry
+    service.registry.basePath: "http://localhost:8081"
+    kafka.producer.max-request-size: 1572864
+    kafka.producer.batch.size: 98304
+    kafka.producer.linger.ms: 10
+    #Redis
+    redisdb.assetstore.id = 1
+
+  flink-conf: |+
+    jobmanager.memory.flink.size: 1024m
+    taskmanager.memory.flink.size: 1024m
+    taskmanager.numberOfTaskSlots: 1
+    parallelism.default: 1
+    jobmanager.execution.failover-strategy: region
+    taskmanager.memory.network.fraction: 0.1
+
+paymentsjob:
+  paymentsjob: |+
+    include file("/data/flink/conf/base-config.conf")
+    kafka.groupId:  ${job.env}"-claims-job-group"
+    kafka.input.topic: dev.hcx.request.payment
+    kafka.audit.topic: dev.hcx.audit
+    kafka.retry.topic: dev.hcx.request.retry
+    task.consumer.parallelism :  1
+    task.parallelism :  1
+    task.downstream.operators.parallelism: 1
+    #Postgres
+    postgres.database: postgres
+    postgres.table: payload
+    #Registry
+    service.registry.basePath: "http://localhost:8081"
+    kafka.producer.max-request-size: 1572864
+    kafka.producer.batch.size: 98304
+    kafka.producer.linger.ms: 10
+    #Redis
+    redisdb.assetstore.id = 1
 
   flink-conf: |+
     jobmanager.memory.flink.size: 1024m
