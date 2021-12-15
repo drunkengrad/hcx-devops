@@ -2,7 +2,7 @@ namespace: flink
 imagePullSecrets: []
 dockerhub: "maheshkg"
 repository: "hcx-flink-jobs"
-image_tag: "s2-3.0"
+image_tag: "s2-4.0"
 serviceMonitor:
   enabled: false
 replicaCount: 1
