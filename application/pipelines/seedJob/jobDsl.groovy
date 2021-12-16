@@ -3,6 +3,7 @@
 // Ref jobDSL doc: http://your_jenkins_ip:8080/plugin/job-dsl/api-viewer/index.html
 // Online playground: https://groovyide.com/playground
 
+
 String deployFolder = "deploy"
 String provisionFolder = "provision"
 String buildFolder = "build"
